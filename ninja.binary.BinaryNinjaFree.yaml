@@ -1,0 +1,51 @@
+app-id: ninja.binary.BinaryNinjaFree
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+command: binaryninja
+separate-locales: false
+finish-args:
+  # - --share=network
+  # - --socket=x11
+  - --socket=wayland
+  - --socket=fallback-x11
+  # - --share=ipc
+  - --allow=devel
+  - --allow=multiarch
+  # the default runtime doesn't ship the libs required for qt's help reader
+  - --env=LD_LIBRARY_PATH=/usr/lib:/app/binaryninja
+  # these two permissions suck, but IDA can't handle files passed to it
+  # via portal, neither when opening, nor when saving.
+  # I'm not sure if the issue is with IDA or with my understanding of portals,
+  # probably both :^)
+  # - --filesystem=xdg-documents
+  # - --filesystem=xdg-download
+build-options:
+  no-debuginfo: true
+modules:
+  - name: libxml2
+    config-opts:
+        - --without-python
+    sources:
+        - type: archive
+          url: https://download.gnome.org/sources/libxml2/2.9/libxml2-2.9.14.tar.xz
+          sha256: 60d74a257d1ccec0475e749cba2f21559e48139efba6ff28224357c7c798dfee
+  - name: binaryninja
+    buildsystem: simple
+    build-commands:
+      - unzip -q binaryninja_free_linux.zip -d /app/
+      - install -Dm 644 binaryninja.desktop /app/share/applications/ninja.binary.BinaryNinjaFree.desktop
+      - install -Dm 644 android-chrome-512x512.png /app/share/icons/hicolor/512x512/apps/ninja.binary.BinaryNinjaFree.png
+      - install -Dm 755 binaryninja.sh /app/bin/binaryninja
+    sources:
+      - type: file
+        url: https://github.com/Vector35/binaryninja-api/releases/download/stable%2F5.1.8104/binaryninja_free_linux.zip
+        sha256: b3b951bd085e816fdb81973a5e7028c139756593c8374fc125efaede9f6a1ec1
+        dest-filename: binaryninja_free_linux.zip
+        only-arches: [x86_64]
+      - type: file
+        path: android-chrome-512x512.png
+      - type: file
+        path: binaryninja.desktop
+      - type: file
+        path: binaryninja.sh

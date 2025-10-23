@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Exec=/app/bin/binaryninja %f
+Name=Binary Ninja
+Icon=ninja.binary.BinaryNinjaFree
+Terminal=false
+StartupNotify=true
